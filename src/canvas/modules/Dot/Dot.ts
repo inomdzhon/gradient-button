@@ -81,10 +81,10 @@ class Dot {
     this.x += this.vx;
     this.y += this.vy;
 
-    // if (this.float > 0) {
-    //   this.x = this.originalX + this.lastFloat * Math.sin((TWO_PI * this.float) / this.lastFloat);
-    //   this.float = this.float - 1 / 40;
-    // }
+    if (this.float > 0) {
+      this.x = this.originalX + this.lastFloat * Math.sin((TWO_PI * this.float) / this.lastFloat);
+      this.float = this.float - 1 / 40;
+    }
   }
 
   draw(context) {

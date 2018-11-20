@@ -17,14 +17,14 @@ class Mouse {
   }
 
   bindEvents(): void {
-    this.anchorEl.addEventListener('mousemove', this.handleMouseMove);
-    this.anchorEl.addEventListener('mouseout', this.handleMouseOut);
+    document.addEventListener('mousemove', this.handleMouseMove);
+    document.addEventListener('mouseout', this.handleMouseOut);
     this.anchorEl.addEventListener('mouseup', this.handleMouseUp);
     this.anchorEl.addEventListener('mousedown', this.handleMouseDown);
   }
 
   unbindEvents(): void {
-    this.anchorEl.removeEventListener('mousemove', this.handleMouseMove);
+    document.removeEventListener('mousemove', this.handleMouseMove);
     this.anchorEl.removeEventListener('mouseup', this.handleMouseUp);
     this.anchorEl.removeEventListener('mousedown', this.handleMouseDown);
   }

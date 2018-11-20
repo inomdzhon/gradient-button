@@ -25,10 +25,12 @@ export default function generateDots(shape: ShapeType, dotsCount: number): Dot[]
     const radius = shape.radius;
     let x = shape.x + radius * cos;
     let y = shape.y + radius * sin;
-    const z = turbulence(x * 0.02, y * 0.5) * randomInt(0, 10) + rnd(x * 10 + y * 100) * randomInt(500, 1000);
+    // const z = turbulence(x * 0.02, y * 0.5) * randomInt(0, 10) + rnd(x * 10 + y * 100) * randomInt(500, 1000);
 
-    x = x + cos * z * 0.045;
-    y = y + sin * z * 0.045;
+    // x = x + cos * z * 0.045;
+    // y = y + sin * z * 0.045;
+    x = x + cos;
+    y = y + sin;
 
     dots.push(new Dot(x, y));
   }
