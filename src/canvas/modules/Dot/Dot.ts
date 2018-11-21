@@ -13,12 +13,6 @@ class Dot {
   friction: number;
   spring: number;
 
-  id?: number;
-  circleId?: number;
-
-  color: string = 'black';
-  opacity: number = 0;
-
   constructor(x: number, y: number) {
     this.originalX = x;
     this.originalY = y;
@@ -54,12 +48,10 @@ class Dot {
     const dx = this.x - mouse.x;
     const dy = this.y - mouse.y;
 
-    const radius = Math.sqrt(dx * dx + dy * dy);
-    const totalDist = Math.abs(dx) + Math.abs(dy);
-
     const minDist = mouse.radius;
+    const dist = Math.sqrt(dx * dx + dy * dy);
 
-    if (totalDist < minDist) {
+    if (dist < minDist) {
       this.float = 0;
 
       const angle = Math.atan2(dy, dx);
@@ -83,15 +75,14 @@ class Dot {
 
     if (this.float > 0) {
       this.x = this.originalX + this.lastFloat * Math.sin((TWO_PI * this.float) / this.lastFloat);
-      this.float = this.float - 1 / 40;
+      this.float = this.float - 0.1;
     }
   }
 
-  draw(context) {
+  draw(context: CanvasRenderingContext2D) {
     context.save();
     context.translate(this.x, this.y);
-    context.globalAlpha = this.opacity;
-    context.fillStyle = 'tomato';
+    context.fillStyle = 'black';
     context.beginPath();
     //x, y, radius, start_angle, end_angle, anti-clockwise
     context.arc(0, 0, 4, 0, TWO_PI, true);
@@ -103,8 +94,7 @@ class Dot {
   drawAnchor(context) {
     context.save();
     context.translate(this.originalX, this.originalY);
-    context.globalAlpha = this.opacity;
-    context.fillStyle = this.color;
+    context.fillStyle = 'tomato';
     context.beginPath();
     //x, y, radius, start_angle, end_angle, anti-clockwise
     context.arc(0, 0, 4, 0, TWO_PI, true);
