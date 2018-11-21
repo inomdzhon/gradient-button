@@ -2,7 +2,7 @@ import Vec2 from '../Vec2/Vec2';
 
 class Mouse {
   anchorEl: HTMLElement;
-  pos: Vec2 = new Vec2(0, 0);
+  pos: Vec2 = new Vec2(9999, 9999);
   down: boolean = false;
 
   constructor(anchorEl: HTMLElement) {
@@ -17,14 +17,14 @@ class Mouse {
   }
 
   bindEvents(): void {
-    this.anchorEl.addEventListener('mousemove', this.handleMouseMove);
-    this.anchorEl.addEventListener('mouseout', this.handleMouseOut);
+    document.addEventListener('mousemove', this.handleMouseMove);
+    document.addEventListener('mouseout', this.handleMouseOut);
     this.anchorEl.addEventListener('mouseup', this.handleMouseUp);
     this.anchorEl.addEventListener('mousedown', this.handleMouseDown);
   }
 
   unbindEvents(): void {
-    this.anchorEl.removeEventListener('mousemove', this.handleMouseMove);
+    document.removeEventListener('mousemove', this.handleMouseMove);
     this.anchorEl.removeEventListener('mouseup', this.handleMouseUp);
     this.anchorEl.removeEventListener('mousedown', this.handleMouseDown);
   }
@@ -53,6 +53,7 @@ class Mouse {
   }
 
   handleMouseOut(event: MouseEvent): void {
+    this.down = false;
     this.pos.set(9999, 9999);
     return event.preventDefault();
   }

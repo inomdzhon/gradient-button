@@ -1,7 +1,7 @@
 // utils
 import { TWO_PI } from '../../constants';
 
-class Ripple {
+class Circle {
   x: number;
   y: number;
   radius: number;
@@ -23,4 +23,4 @@ class Ripple {
   }
 }
 
-export default Ripple;
+export default Circle;

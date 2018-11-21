@@ -24,20 +24,26 @@ export default function generateSlush(
   centerX: number,
   centerY: number,
 ) {
+  if (window._debug) {
+    width = window._buttonWidth;
+    height = window._buttonHeight;
+  }
+
   const RADIAN = TWO_PI / shapesParam.length;
 
-  const dotsCount = window._debug ? Math.max(window._buttonWidth, window._buttonHeight) * 0.06 : Math.max(width, height) * 0.09;
+  const dotsCount = Math.max(width, height) * 0.09;
 
   const slushArray: SlushType[] = [];
 
   for (let i = 0, shapesParamLength = shapesParam.length; i < shapesParamLength; i += 1) {
     const shape = shapesParam[i];
 
-    const radius = Math.round((window._buttonWidth + window._buttonHeight) / 4.5);
+    const radiusX = width * (shapesParam.length / 10);
+    const radiusY = height * (shapesParam.length / 10);
     const cos = Math.cos(i * RADIAN);
     const sin = Math.sin(i * RADIAN);
-    const x = radius * cos + centerX;
-    const y = radius * sin + centerY;
+    const x = radiusX * cos + centerX;
+    const y = radiusY * sin + centerY;
 
     slushArray.push({
       color: shape.color,
@@ -46,7 +52,8 @@ export default function generateSlush(
         {
           x,
           y,
-          radius,
+          radiusX: radiusX,
+          radiusY: radiusY,
         },
         dotsCount,
       ),

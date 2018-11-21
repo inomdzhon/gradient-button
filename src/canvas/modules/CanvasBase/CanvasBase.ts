@@ -110,6 +110,7 @@ export default class CanvasBase {
     if (this.paused) {
       this.paused = false;
       this.tick();
+      // this.draw();
     }
   }
 

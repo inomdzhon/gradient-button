@@ -20,6 +20,9 @@ class Slush extends CanvasBase {
   }
 
   draw(deltaTime: number = 0): void {
+    this.context.fillStyle = '#47F6FF';
+    this.context.fillRect(0, 0, this.width, this.height);
+
     this.mesh.draw(deltaTime);
 
     if (window._debug) {

@@ -1,6 +1,6 @@
 // modules
 import Dot from '../Dot/Dot';
-import Ripple from '../Ripple/Ripple';
+import Circle from '../Circle/Circle';
 
 // core utils
 import { toQuadraticCurveTo, invertCoordinateToAngle } from '../../utils/index';
@@ -10,6 +10,8 @@ import Mouse from '../Mouse/Mouse';
 
 // utils
 import generateSlush, { SlushType } from './generateSlush';
+
+import { TWO_PI } from '../../constants';
 
 type PropsType = {
   width: number;
@@ -28,19 +30,16 @@ class Mesh {
   height: number;
   centerX: number;
   centerY: number;
-  rotationAngle: number;
   backgroundColor: string;
 
   fakeRippleSize: number = 100;
-  fakeRippleBatch: { played: boolean; ripple: Ripple }[] = [];
+  fakeRippleBatch: { played: boolean; ripple: Circle }[] = [];
 
   rippleActivated: boolean = false;
-  rippleBaseSize: number = 80;
-  rippleTweenSize: number = 80;
-  rippleSize: number = 200;
+  rippleBaseSize: number = 70;
+  rippleTweenSize: number = 70;
+  rippleSize: number = 150;
   rippleSpeed: number = 27;
-
-  paused: boolean;
 
   constructor(props: PropsType) {
     this.width = props.width;
@@ -51,9 +50,7 @@ class Mesh {
     this.canvas = document.createElement('canvas');
     this.canvas.width = props.width;
     this.canvas.height = props.height;
-    this.context = this.canvas.getContext('2d', {
-      alpha: false,
-    }) as CanvasRenderingContext2D;
+    this.context = this.canvas.getContext('2d') as CanvasRenderingContext2D;
 
     this.shapes = generateSlush(
       [{ color: '#43ece1' }, { color: '#b5ffc3' }, { color: '#f39bf2' }],
@@ -62,10 +59,8 @@ class Mesh {
       this.centerX,
       this.centerY,
     );
-    this.rotationAngle = 0;
     this.backgroundColor = props.backgroundColor;
     this.mouse = props.mouse;
-    this.paused = true;
   }
 
   setSize(width: number, height: number): void {
@@ -75,36 +70,9 @@ class Mesh {
     this.centerY = height / 2;
   }
 
-  rotate(): void {
-    if (this.rotationAngle >= 6.28319) {
-      this.rotationAngle = this.rotationAngle - 6.28319;
-    }
-
-    this.rotationAngle += (0.05 * Math.PI) / 180;
-
-    this.context.translate(this.centerX, this.centerY);
-    this.context.rotate((0.05 * Math.PI) / 180);
-    this.context.translate(-1 * this.centerX, -1 * this.centerY);
-  }
-
   draw(deltaTime: number = 1): void {
     // reset canvas
-    this.context.save();
-    this.context.fillStyle = this.backgroundColor;
-    this.context.setTransform(1, 0, 0, 1, 0, 0);
-    this.context.fillRect(0, 0, this.width, this.height);
-    this.context.restore();
-
-    this.rotate();
-
-    // invert mouse coordinates after rotated
-    const pos = invertCoordinateToAngle(
-      this.centerX,
-      this.centerY,
-      this.mouse.pos.x,
-      this.mouse.pos.y,
-      this.rotationAngle,
-    );
+    this.context.clearRect(0, 0, this.width, this.height);
 
     if (this.mouse.down) {
       if (!this.rippleActivated) {
@@ -114,15 +82,15 @@ class Mesh {
       if (!this.fakeRippleBatch.length) {
         this.fakeRippleBatch.push({
           played: false,
-          ripple: new Ripple(pos.x, pos.y, 0, this.backgroundColor),
+          ripple: new Circle(this.mouse.pos.x, this.mouse.pos.y, 0, this.backgroundColor),
         });
       } else {
         if (this.fakeRippleBatch[0].played) {
           this.fakeRippleBatch[0].played = false;
         }
 
-        this.fakeRippleBatch[0].ripple.x = pos.x;
-        this.fakeRippleBatch[0].ripple.y = pos.y;
+        this.fakeRippleBatch[0].ripple.x = this.mouse.pos.x;
+        this.fakeRippleBatch[0].ripple.y = this.mouse.pos.y;
       }
     }
 
@@ -134,6 +102,10 @@ class Mesh {
       }
     } else if (this.rippleTweenSize > this.rippleBaseSize) {
       this.rippleTweenSize -= deltaTime + this.rippleSpeed;
+
+      if (this.rippleTweenSize < this.rippleBaseSize) {
+        this.rippleTweenSize = this.rippleBaseSize;
+      }
     }
 
     for (let i = 0, shapesLength = this.shapes.length; i < shapesLength; i += 1) {
@@ -149,8 +121,8 @@ class Mesh {
         }
 
         dot.think({
-          x: pos.x,
-          y: pos.y,
+          x: this.mouse.pos.x,
+          y: this.mouse.pos.y,
           radius: this.rippleTweenSize,
         });
       }
@@ -159,7 +131,7 @@ class Mesh {
     }
 
     if (this.fakeRippleBatch.length) {
-      const filteredBatch: { played: boolean; ripple: Ripple }[] = [];
+      const filteredBatch: { played: boolean; ripple: Circle }[] = [];
 
       for (let i = 0, j = this.fakeRippleBatch.length; i < j; i += 1) {
         const fakeRipple = this.fakeRippleBatch[i];
